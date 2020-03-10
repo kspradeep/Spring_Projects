@@ -1,0 +1,49 @@
+apply plugin: 'java'
+apply plugin: 'com.google.protobuf'
+apply plugin: 'idea'
+apply plugin: 'maven-publish'
+group 'com.nextgen.evm.grpc.poc'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-web:2.1.11.RELEASE'
+    compile 'io.github.lognet:grpc-spring-boot-starter:3.0.0'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.1.11.RELEASE'
+    testCompile 'org.springframework.boot:spring-boot-starter-test:2.1.11.RELEASE'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.8'
+    }
+}
+protobuf {
+    // Configure the protoc executable
+    protoc {
+        // Download from repositories
+        artifact = 'com.google.protobuf:protoc:3.5.1'
+    }
+    // Configure the codegen plugins
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.1.2'
+        }
+    }
+
+    generateProtoTasks.generatedFilesBaseDir = 'generated-sources'
+
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
